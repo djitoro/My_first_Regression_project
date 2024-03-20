@@ -2,6 +2,7 @@ import pandas as pd
 import numpy as np
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LogisticRegression
+from sklearn import metrics
 
 # fixing a bug with replace
 pd.set_option("future.no_silent_downcasting", True)
@@ -12,36 +13,19 @@ with open(file='train.csv') as file:
 data = data_train.dropna()  # dell null string
 data = data.dropna()
 
-all_head = np.array(['hotel','is_canceled','lead_time,arrival_date_year','arrival_date_month',
-                     'arrival_date_week_number','arrival_date_day_of_month',
-                     'stays_in_weekend_nights','stays_in_week_nights','adults,children','babies',
-                     'meal','country','market_segment','distribution_channel','is_repeated_guest',
-                     'previous_cancellations','previous_bookings_not_canceled',
-                     'reserved_room_type','assigned_room_type','booking_changes','deposit_type',
-                     'days_in_waiting_list','customer_type','adr','required_car_parking_spaces',
-                     'total_of_special_requests','reservation_status_date'])
+all_head = np.array(['hotel', 'is_canceled', 'lead_time,arrival_date_year', 'arrival_date_month',
+                     'arrival_date_week_number', 'arrival_date_day_of_month',
+                     'stays_in_weekend_nights', 'stays_in_week_nights', 'adults,children', 'babies',
+                     'meal', 'country', 'market_segment', 'distribution_channel', 'is_repeated_guest',
+                     'previous_cancellations', 'previous_bookings_not_canceled',
+                     'reserved_room_type', 'assigned_room_type', 'booking_changes', 'deposit_type',
+                     'days_in_waiting_list', 'customer_type', 'adr', 'required_car_parking_spaces',
+                     'total_of_special_requests', 'reservation_status_date'])
 
 
 # methods for visualizing data allow you to determine which data is not important
 '''
-table = pd.crosstab(data.hotel, data.is_canceled)
-print(table)
-print(sum(table[1]))
-print(table.iloc[1][1])
 
-table = pd.crosstab(data.distribution_channel, data.is_canceled)
-table.div(table.sum(1).astype(float), axis=0).plot(kind='bar', stacked=True)
-plt.title('Dependence of hotel and cancellation rate')
-plt.xlabel('arrival date month')
-plt.ylabel('Number of cancellations')
-plt.show()
-
-pd.crosstab(data.distribution_channel,data.is_canceled).plot(kind='bar')
-plt.title('Purchase Frequency for Job Title')
-plt.xlabel('Job')
-plt.ylabel('Frequency of Purchase')
-plt.savefig('purchase_fre_job')
-plt.show()
 '''
 
 # tags that do not influence decision-making:
@@ -81,3 +65,32 @@ X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_
 
 # instantiate the model
 log_regression = LogisticRegression()
+
+# fit the model using the training data
+log_regression.fit(X_train, y_train)
+
+# use model to make predictions on test data
+y_pred = log_regression.predict(X_test)
+
+# system response matrix:
+# true guesses; true not guessed
+# false guesses; false not guessed
+cnf_matrix = metrics.confusion_matrix(y_test, y_pred)
+print(cnf_matrix)  # judging by this data, we can say that the model lacks data in one of the categories
+
+print(" Accuracy:", metrics.accuracy_score(y_test, y_pred))
+
+# current efficiency = 0.811305256869773
+# To increase efficiency, let's try other training models:
+
+# increase the number of iterations
+# (max_iter=1000)
+
+# use regularization methods (L1 and L2)
+# Create a LogisticRegression instance with L1 regularization and a high penalty
+# model = LogisticRegression(penalty='l1', C=0.01, solver='liblinear')
+
+# data normalization
+
+
+
