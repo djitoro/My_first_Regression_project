@@ -1,2 +1,2 @@
 # RTU_LAB_basic_project
-the project is located in the master branch
+(Attention: the project code is located in the master branch)
